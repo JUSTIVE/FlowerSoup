@@ -17,3 +17,16 @@
 |0o42|int/int32|System.Int32|8진수 정수입니다|
 |0b10010|int/int32|System.Int32|2진수 정수입니다|
 |34y|sbyte|System.SByte|부호를 가진 바이트입니다|
+|34uy|byte|System.Byte|부호를 가지지 않는 바이트입니다|
+|34s|int16|System.Int16|16비트 정수입니다|
+|34us|uint16|System.UInt16|부호를 가지지 않는 16비트 정수입니다|
+|34l|int/int32|System.Int32|32비트 정수입니다|
+|34ul|uint32|System.UInt32|부호를 가지지 않는 32비트 정수입니다|
+|34n|nativeint|System.IntPtr|네이티브 크기를 가지는 정수입니다|
+|34un|unativeint|System.UIntPtr|네이티브 크기를 가지는 정수입니다|
+|34L|int64|System.Int64|32비트 정수입니다|
+|34UL|int64|System.Int64|부호를 가지지 않는 32비트 정수입니다|
+|3.0F,3.0f|float32|System.Single|IEEE 32비트 부동소수점 실수입니다|
+|3.0|float|System.Double|IEEE 64비트 부동소수점 실수입니다|
+|3473262622571I|bigint|Microsoft.FSharp.Math.BigInt|임의의 큰 정수입니다|
+|47426261253617N|bignum|Microsoft.FSharp.Math.BigNum|임의의 큰 수입니다|
