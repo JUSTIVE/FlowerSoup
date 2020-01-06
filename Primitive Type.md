@@ -18,3 +18,6 @@ double 과 float은 사실상 같다(64-bit floating number), alias라고 생각
 ```
 
 이는 `+1`을 `signed int (+1)`로 보기 때문. 
+
+## List
+Fsharp에서의 list는 
