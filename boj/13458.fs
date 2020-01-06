@@ -1,19 +1,16 @@
 open System
 [<EntryPoint>]
 let main argv=
+    let inline r ()= 
+        Console.ReadLine().Split([|' '|])
+        |> Array.map int64
     let n = 
-        Console.ReadLine().Split([|' '|])
-        |> Array.map int64
+        r()
         |> Array.get <| 0
-    let mutable A =
-        Console.ReadLine().Split([|' '|])
-        |> Array.map int64
-    let x =
-        Console.ReadLine().Split([|' '|])
-        |> Array.map int64
+    let mutable A = r()
+    let x = r()
     let b,c =
         Array.get x 0, Array.get x 1
-    
     A 
     |> Array.map (fun x -> x-b)
     |> Array.map (
