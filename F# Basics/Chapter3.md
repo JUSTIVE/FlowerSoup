@@ -88,5 +88,14 @@ let myAdd = fun x y -> x + y
 let raisePowerTwo x = x ** 2.0
 ```
 
-첫 식별자는 함수의 이름이고, 두 번째 식별자는 함수의 인자의 이름입니다. 만약 함수의 이름이 있다면, 
+첫 식별자는 함수의 이름이고, 두 번째 식별자는 함수의 인자의 이름입니다. 만약 함수의 이름이 있다면, 짦은 문법을 이용하여 정의하는 것을 강력히 추천합니다.
+
+F#에서는 function이 값이고, F#의 문법은 이들을 비슷하게 다루기 때문에 *value*와 *function*을 정의하는 것은 구분할 수 없습니다.
+
+```fsharp
+let n = 10
+let add a b = a + b
+let result = add n 4
+printfn "result = %i" result
+```
 
