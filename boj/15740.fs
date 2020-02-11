@@ -7,6 +7,8 @@ let main argv =
         (Console
             .ReadLine()
             .Split(' ')
-            |> Array.map(fun x -> bigint (int x)) 
-            |> Array.reduce(fun x y -> x + y))
+            |> Array.map(fun x ->
+                let v,r = bigint.TryParse(x)
+                r) 
+            |> Array.reduce(fun (x) (y) -> x + y))
     0
