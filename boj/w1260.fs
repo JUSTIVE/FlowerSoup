@@ -1,21 +1,40 @@
 open System
-open System.Collections.Generic
-type node (idIn:int)=
-    static member doBfs(initialNode) =
-        ignore
-    static member nodeList = Array.empty<node>
-    member public this.id = idIn
-    member val link = List.empty<node> with get, set
-    member this.addLink(id)=
-        this.link <-  node.nodeList.[id]::this.link
 
-[<EntryPoint>]
-let main argv =
-    let ins = Console.ReadLine().Split(' ')|>Array.map(int)
+let mp s (x,y) =
+    match s|>Map.tryFind x with
+    | Some a ->
+        s|>Map.add x (a|>Seq.append [y,false])
+    | None ->
+        s|>Map.add x (Seq.append Seq.empty<int*bool> [(y,false)])
+
+let arr_to_pair (x:int[]) =
+    match x with
+    | [|x;y|] -> (x,y)
+    | _ -> failwith "unexpected"
     
-    for i in 0..ins.[1] do
-        let edge = Console.ReadLine().Split(' ')|>Array.map(int)
-        node.nodeList.[edge.[0]].addLink(edge.[1])
         
-    node.doBfs(ins.[2])|>ignore
-    0
+let rec ins s i c =
+    if i = c-1 then s
+    else ins (mp s (Console.ReadLine().Split()|>Array.map int|>arr_to_pair)) (i+1) c
+
+type t = Map <int, Map<int, bool>>
+
+
+let rec dfs (g:Map<int,seq<int*bool>>) (vl:seq<int>) b = 
+    g
+    |>Map.toSeq
+    |>Seq.sortBy(fun (a,b)->a)
+    |>Seq.map(fun (a,b)->
+        b
+        |>Seq.map(fun y->printfn " "))
+    
+let doProb (d:Map<int,seq<int*bool>>) (b:int) =
+    dfs d Seq.empty<int> b
+    |>ignore
+
+let [|n;m;v|] = Console.ReadLine().Split()|>Array.map int
+ins Map.empty<int,seq<int*bool>> 0 (Console.ReadLine()|>int)
+|>Map.map(fun k v -> v|>Seq.sortBy(fun (a,b)->a))
+|>doProb<|v
+
+
