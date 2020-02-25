@@ -1,58 +1,45 @@
 open System
 
-let mp s (x,y) =
-    let mutable  aa,bb = 0,0
-    if x>y then
-        aa<-y
-        bb<-x
+let rec ReadEdge (graphMap:Map<int,seq<int>>) totalEdges currentnum =
+    if totalEdges = currentnum then graphMap
     else
-        aa<-x
-        bb<-y
-        
-    match s|>Map.tryFind aa with
-    | Some a ->
-        s|>Map.add aa (a|>Seq.append [bb])
-    | None ->
-        s|>Map.add aa (Seq.append Seq.empty<int> [bb])
+        let [|f;t|] = Console.ReadLine().Split()|>Array.map int|>Array.sort
+        ReadEdge (match graphMap.TryFind f with
+                | Some a ->
+                    graphMap|>Map.add f (a|>Seq.append [t])
+                | None ->
+                    graphMap|>Map.add f (Seq.empty<int>|>Seq.append [t])) totalEdges (currentnum+1)
 
-let arr_to_pair (x:int[]) =
-    match x with
-    | [|x;y|] -> (x,y)
-    | _ -> failwith "unexpected"
-    
-        
-let rec ins s i c =
-    if i = c then s
-    else ins (mp s (Console.ReadLine().Split()|>Array.map int|>arr_to_pair)) (i+1) c
-
-let validCandidate (graph:Map<int,seq<int>>) (index:int) (visitiedList:Set<int>) =
-    match graph|>Map.tryFind index with
+let getListChildren graphMap fromNode toVisitNodes visitedNodes= 
+    match graphMap|>Map.tryFind fromNode with
     | Some v ->
         v
+        |>Seq.filter
+            (fun x-> 
+                not (Set.contains x visitedNodes))
+        |>Seq.sort
         |>Seq.toList
-        |>List.filter(fun x-> Set.exists (fun y -> x<>y) visitiedList)
-        |>List.sort
     | None -> List.empty<int>
 
-let rec dfs graph toVisitList visitiedList =
-    if toVisitList|>List.length = 0 then graph
+let rec dfs graphMap toVisitNodes (visitedNodes:Set<int>) =
+    if toVisitNodes|>List.length = 0 then visitedNodes
     else
-        match toVisitList with
-        | h::t ->
-            printf "%d " h
-            dfs graph (t|>List.append (validCandidate graph h visitiedList)) (visitiedList|>Set.add h)
-        | []->
-            dfs graph List.empty<int> Set.empty<int>
-    
+        match Map.tryFind toVisitNodes.[0] graphMap with
+        | Some adjacentList ->
+            adjacentList
+            |>List.iter
+                (fun x->
+                    dfs
+                        graphMap
+                        (toVisitNodes|>List.append [x])
+                        (Set.add x visitedNodes)|>ignore
+                    ())
+            visitedNodes
+        | None ->
+            visitedNodes
 
-    
-let doProb (d:Map<int,seq<int>>) (b:int) =
-    dfs d (List.empty<int>|>List.append [b]) (Set.empty<int>|>Set.add b)
-    |>ignore
+let doProp graphMap initNode =
+    dfs graphMap [initNode] Set.empty<int>|>ignore
 
-let [|n;m;v|] = Console.ReadLine().Split()|>Array.map int
-ins Map.empty<int,seq<int>> 0 m
-|>Map.map(fun k v -> v|>Seq.sort)
-|>doProb<|v
-
-
+let [|n;e;i|] = Console.ReadLine().Split()|>Array.map int
+doProp (ReadEdge Map.empty<int,seq<int>> e 0) i
