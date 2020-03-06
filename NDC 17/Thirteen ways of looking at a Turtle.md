@@ -14,8 +14,7 @@ https://www.youtube.com/watch?v=AG3KuqDbmhM&t=1804s
   
 ## Turtle graphics in action
 
-네모 안에 거북이가 있다고 치고, 이 거북이가 움직이면서 선을 그릴 것입니다.
-사용될 API는 다음과 같습니다.
+네모 안에 거북이가 있다고 치고, 이 거북이가 움직이면서 선을 그릴 것입니다. 사용될 API는 다음과 같습니다.
 |API|설명|
 |---|---|
 |Move aDistance| 현재 위치에서 일정 거리를 움직입니다.|
@@ -173,7 +172,7 @@ let drawTriangle()=
 
 화면 뒤의 스레딩 상태
 
-만약 거북이가 네모의 가장자리에 닿으면 더 이상 가지 못한다고 하는 상황을 위하여 API를 바꿔보겠습니다.
+만약 거북이가 네모의 가장자리에 닿으면 더 이상 가지 못한다고 하는 상황을 위하여 API를 바꿔보겠습니다.  
 move의 반환값이 (새 상태*실제 이동한 거리)
 
 다음은 함수형의 접근으로 새 API를 작성한 것입니다.
@@ -207,8 +206,7 @@ else
 
 >TurtleFunction(input) -> State<>
 
-로 볼 수 있습니다. 이제 하나의 값을 반환하는 함수가 되었으니, 파이핑을 할 수 있습니다. 
-이를 사용하기 위해서는 별도의 특별한 `state expression`을 사용해야 합니다.
+로 볼 수 있습니다. 이제 하나의 값을 반환하는 함수가 되었으니, 파이핑을 할 수 있습니다. 이를 사용하기 위해서는 별도의 특별한 `state expression`을 사용해야 합니다.
 
 사용례
 
@@ -284,5 +282,89 @@ match result1 with
     printfn "second move failed %s" msg
 ```
 
-이러한 구조를 반복하는 것은 아름답지 않습니다.  
-그래서 이를 result 계산식을 이용하여 재정의를 하면 다음과 같습니다.
+이러한 구조를 반복하는 것은 아름답지 않습니다. 그래서 이를 result 계산식을 이용하여 재정의를 하면 다음과 같습니다.
+
+```fsharp
+let finalResult = result {
+    let s0= Turtle.initialTurtleState
+    let! s1 = s0 |> Turtle.move 80.0
+    printfn "first move succeeded"
+    let! s2 = s1 |> Turtle.move 30.0
+    printfn "second movesucceeded"
+    let! s3 = s2 |> Turtle.turn 120.0<Degrees>
+    let! s4 = s3 |> Turtle.move 80.0
+    printfn "third move succeeded"
+    return()
+}
+```
+위의 코드 중 하나라도 실패하는 것이 있다면, 다른 모든 라인을 무시하고 맨 아래의 라인으로 가게 될 것입니다. 위의 코드에서 상태를 계속 추적하는 것이 보입니다. 이를 상태와 결과를 합쳐서 표현하면 다음과 같습니다.
+
+```fsharp
+let finalResult = resultState{
+    do! Turtle.move 80.0
+    printfn "first move succeeded"
+    do! Turtle.move 30.0
+    printfn "second move succeeded"
+    do! Turtle.turn 120.0<Degrees>
+    do! Turtle.move 80.0
+    printfn "third move succeeded"
+    return ()
+}
+```
+
+이는 객체지향에서의 명령형 코드처럼 보입니다. 그러나 객체지향과는 다르게 상태 관리와 에러 처리가 적용되어 있습니다.
+
+### 장점과 단점
+
+장점
+
+- 에러가 명시적으로 반환됩니다(Exception이 없습니다)
+- 지저분한 에러 처리 코드가 없습니다(try-catch등)
+
+단점
+
+- 구현하고 쓰기가 좀 어렵습니다
+
+## Async Turtle
+
+만약 turtle이 비동기로 호출되었다면?
+
+```fsharp
+let s0 = Turtle.initialTurtleState
+s0|> Turtle.moveAsync 80.0 (fun s1 ->
+    s1 |> Turtle.moveAsync 80.0 (fun s2 ->
+        s2 |> Turtle.moveAsync 80.0 (fun s3 ->
+        ...
+        )
+    )
+)
+```
+
+비동기로 처리되는 코드에서는 작업이 끝나고 새 상태를 가지고 호출되는 콜백이 있습니다. 새 상태에서 다시 움직일때는 새 콜백을 이용합니다. 이는 비동기 코드가 있는 곳에서는 흔한 패턴입니다.
+
+그래서 이걸 해결하기 위해 async 계산표현식을 이용합니다. 이는 콜백을 숨겨줍니다.
+
+```fsharp
+let finalResult = async {
+    let s0 = Turtle.initialTurtleState
+    let! s1 = s0 |> Turtle.moveAsync 80.0
+    let! s2 = s1 |> Turtle.moveAsync 80.0
+    let! s3 = s2 |> Turtle.moveAsync 80.0
+    ...
+}
+```
+
+그래서 위의 코드 상에서 비동기 호출을 할 때에, 걱정하지 않아도 알아서 다 처리됩니다. 일반 코드처럼 보여도, 비동기 호출이 전부 처리됩니다.
+
+여기서 패턴이 보이시나요? 바로 모나드입니다.
+
+지금까지 한 것들을 정리해 보겠습니다.
+
+구성(Composition)
+- 함수들을 체이닝하는 것
+
+명확성(Explicitness)
+- 명시적인 상태 관리(mutation이 없음)
+- 명시적인 에러(예외가 없음)
+
+화면 밖에서 상태/에러/콜백을 스레딩하는 기술(m-word)
