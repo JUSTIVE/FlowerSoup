@@ -368,3 +368,20 @@ let finalResult = async {
 - 명시적인 에러(예외가 없음)
 
 화면 밖에서 상태/에러/콜백을 스레딩하는 기술(m-word)
+
+## Batch commands
+
+호출자가 상태관리를 어떻게 피할 수 있을까?
+
+batch 프로세싱을 할 때는, 명령 집합을 만든 후, batch 프로세서에 전달합니다. 이는 클라이언트 관점에서 매우 바람직합니다.
+<pre>
+[클라이언트]                  [   batch runner   ] ->   (state)   -> [Turtle functions]  
+            -> (명령 집합) -> [(실행)->(명령 순회)] <- (new state) <-
+                                            ㄴ 여기에서 상태 추적
+</pre>
+
+여기서 문제가 있습니다. 각 명령들은 함수가 아닌 데이터입니다. 어떻게 함수를 데이터로 만들 수 있을까요? 이는 간단
+
+```fsharp
+let move distance
+```
