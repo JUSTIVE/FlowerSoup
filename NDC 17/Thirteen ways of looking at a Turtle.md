@@ -380,8 +380,38 @@ batch 프로세싱을 할 때는, 명령 집합을 만든 후, batch 프로세�
                                             ㄴ 여기에서 상태 추적
 </pre>
 
-여기서 문제가 있습니다. 각 명령들은 함수가 아닌 데이터입니다. 어떻게 함수를 데이터로 만들 수 있을까요? 이는 간단
+여기서 문제가 있습니다. 각 명령들은 함수가 아닌 데이터입니다. 어떻게 함수를 데이터로 만들 수 있을까요? 이는 union 타입을 이용하여 간단하게 만들 수 있습니다
+
 
 ```fsharp
+//api
 let move distance
+let turn float<Degrees>
+let penUp()
+let penDown()
+```
+```fsharp
+//data
+type TurtleCommand =
+| Move of Distance
+| Turn of Angle
+| PenUp
+| PenDown
+```
+그래서 우리는 이제 serialize 가능한 명령을 만들었습니다
+
+사용례
+```fsharp
+let commands = [
+    Move 100.0
+    Turn 120.0<Degrees>
+    Move 100.0
+    Turn 120.0<Degrees>
+    Move 100.0
+]
+```
+이들은 함수 호출처럼 보이지만, 이들은 그냥 데이터일 뿐입니다. 이제 이 명령들을 배치 프로세서에게 넘기면, 이 명령들을 한번에 수행합니다.
+
+```fsharp
+TurtleBatch.run commands
 ```
