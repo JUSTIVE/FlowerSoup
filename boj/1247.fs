@@ -1,9 +1,9 @@
 open System
 
 let rec getter s g c =
-    if g=c then s
-    else
-        getter (s + (Console.ReadLine()|>bigint.Parse)) g (c+1)
+    match g=c with
+    | true -> s
+    | false -> getter (s + (Console.ReadLine()|>bigint.Parse)) g (c+1)
 
 let solvr ()=
     match getter 0I (Console.ReadLine()|>int) 0 with
@@ -12,8 +12,9 @@ let solvr ()=
     | __ -> "-"
 
 let rec doProp g c =
-    if g=c then ()
-    else
+    match g=c with
+    | true -> ()
+    | false ->
         solvr()|>printfn "%s"
         doProp g (c+1)
 

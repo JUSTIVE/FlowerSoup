@@ -1,11 +1,17 @@
 open System
-     [<EntryPoint>]
-     let main argv =
-         printfn "%s" (match Console.ReadLine().Split()|>Array.map int with
-            | [|a;b|] when (a > b) ->
-                ">"
-            | [|a;b|] when a = b ->
-                "=="
-            |__ ->
-                "<")   
-         0
+
+[<EntryPoint>]
+let main argv =
+    let formatter x =
+        match x with
+        | [| a; b |] when (a > b) -> ">"
+        | [| a; b |] when a = b -> "=="
+        | __ -> "<"
+
+    printfn
+        "%s"
+        (Console.ReadLine().Split()
+         |> Array.map int
+         |> formatter)
+
+    0
