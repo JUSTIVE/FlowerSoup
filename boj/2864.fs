@@ -2,27 +2,25 @@ open System
 
 let sangC inc lamb =
     inc
-    |>Seq.map lamb
-    |>Seq.map(fun x->string x)
-    |>Seq.fold(fun a b->a+b) ""
-    |>int
+    |> Seq.map lamb
+    |> Seq.map (string)
+    |> Seq.fold (+) ""
+    |> int
 
-let sangMax inc =
-    sangC inc (fun x->if x = '5' then '6' else x)
+let dt a b (x: char) =
+    match x = a with
+    | true -> b
+    | __ -> x
 
-let sangMin inc =
-    sangC inc (fun x->if x = '6' then '5' else x)
+let sangMax inc = sangC inc (dt '5' '6')
+
+let sangMin inc = sangC inc (dt '6' '5')
 
 let doCalcP ins l =
-    ins
-    |>Array.fold(fun a b -> a + (l b)) 0
+    ins |> Array.fold (fun a b -> a + (l b)) 0
 
 let doProp ins =
-    [|sangMin;sangMax|]
-    |>Array.map(
-        fun x -> 
-            doCalcP ins x
-            |>printf "%d ")
+    [| sangMin; sangMax |]
+    |> Array.map (fun x -> doCalcP ins x |> printf "%d ")
 
-Console.ReadLine().Split()
-|>doProp|>ignore
+Console.ReadLine().Split() |> doProp |> ignore

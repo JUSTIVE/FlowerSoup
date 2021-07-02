@@ -12,12 +12,14 @@ let char2Int c =
     | '%' -> 7
     | '/' -> -1
 
+let f x =x|>float
+
 let octalizer ins =
     ins
     |>Seq.rev
     |>Seq.map char2Int
     |>Seq.indexed
-    |>Seq.map (fun (a,b)->(a|>float,b|>float))
+    |>Seq.map (fun (a,b)->(f a,f b))
     |>Seq.fold(fun x (a,b) -> x + (((8.0**a)*b)|>int)) 0
     
 let rec doProp () =

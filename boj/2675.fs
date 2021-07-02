@@ -6,6 +6,6 @@ open System
             for j in 0..ins.[1].Length-1 do
                 for k in 0..(ins.[0]|>int)-1 do
                     printf "%c" ins.[1].[j]
-                printfn ""
+            printfn ""
             ignore
          0
